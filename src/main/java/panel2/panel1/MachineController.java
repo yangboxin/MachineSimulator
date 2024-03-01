@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class MachineController extends Application {
+    // memory layout
     private String[] memory = new String[2048];
     private String[] GPR = new String[4];
     private String[] IXR = new String[3];
@@ -26,7 +27,7 @@ public class MachineController extends Application {
     private String CC = "0000";
     private String MFR = "0000";
 
-    private Task<Void> runningTask;
+    private Task<Void> runningTask; //
     private Thread runningThread;
     private HashSet<String> LoadStore;
     private HashMap<String, TextField> regMap;
@@ -110,7 +111,7 @@ public class MachineController extends Application {
     private Button IR_Button;
 
     public void init(){
-        // initialization for hashmaps
+        // initialization for memory-related
         Arrays.fill(memory, "0000000000000000");
         Arrays.fill(GPR, "0000000000000000");
         Arrays.fill(IXR, "0000000000000000");
@@ -132,6 +133,7 @@ public class MachineController extends Application {
     }
     @FXML
     private void initialize() {
+        //initialization for FXML-related
         TFOCTAL.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 String input = TFOCTAL.getText(); // get user input
@@ -177,14 +179,16 @@ public class MachineController extends Application {
         PC_Button.setOnAction(event -> {
             String binaryData = TFBINARY.getText();
             binaryData = String.format("%12s", binaryData).replace(' ', '0');
-            TFPC.setText(binaryData);
-            PC = binaryData; // update pc
+            String lowest12bits = binaryData.substring(binaryData.length()-12);
+            TFPC.setText(lowest12bits);
+            PC = lowest12bits; // update pc
         });
         MAR_Button.setOnAction(event -> {
             String binaryData = TFBINARY.getText();
             binaryData = String.format("%12s", binaryData).replace(' ', '0');
-            TFMAR.setText(binaryData);
-            MAR = binaryData; // update MAr
+            String lowest12bits = binaryData.substring(binaryData.length()-12);
+            TFMAR.setText(lowest12bits);
+            MAR = lowest12bits; // update MAr
         });
         MBR_Button.setOnAction(event -> {
             TFMBR.setText(TFBINARY.getText());
@@ -198,11 +202,12 @@ public class MachineController extends Application {
     private int parse(String instruction){
         // input is instruction's binary form
         if(instruction.length()!=16)
-            return 10; // wrong format
+            return 10; // wrong format; reserved for debug
         String opcode = instruction.substring(0,6);
         if(LoadStore.contains(opcode)){
             return handleLoadStore(instruction);
         }
+        // easy to develop other instructions under this structure
         return 1;// error;
     }
     private int calculateEA(String indexRegisters, String addressingMode, String address){
@@ -289,18 +294,20 @@ public class MachineController extends Application {
     }
     @FXML
     private void handleRunButton() {
+        // concurrency via Task
         runningTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 while(!isCancelled()){
+                    // HALT controls isCancelled()
                     String addressBin = TFPC.getText();
                     int addressDec = Integer.parseInt(addressBin, 2);
                     String instructionBin = memory[addressDec];
                     String dataChk = instructionBin.substring(0,6);
-                    if(dataChk.equals("000000")){
+                    if(dataChk.equals("000000")){// check if input is data
                         memory[addressDec]=instructionBin.substring(6);
                     }
-                    int res = parse(instructionBin);
+                    int res = parse(instructionBin);// deliver to parse to determine which instruction this is and execute
                     addressDec++;
                     if(addressDec>2048){
                         runningTask.cancel();
@@ -308,7 +315,7 @@ public class MachineController extends Application {
                     }
                     String incrementAdd = String.format("%12s",Integer.toBinaryString(addressDec)).replace(' ','0');
                     TFPC.setText(incrementAdd);
-                    Thread.sleep(1000);
+                    Thread.sleep(1000);// sleep 1s each cycle for a clear display in panel
                 }
                 return null;
             }
@@ -323,7 +330,6 @@ public class MachineController extends Application {
     @FXML
     private void handleIPLButton() {
         // Initialize the machine, clear memory
-        // THIS SHOULD BE FILE READING AND LOADING
         init();
         TFGPR0.setText(String.format("%016d", 0));
         TFGPR1.setText(String.format("%016d", 0));
@@ -339,14 +345,15 @@ public class MachineController extends Application {
         TFCC.setText(String.format("%04d", 0));
         TFMFR.setText(String.format("%04d", 0));
 
-        //read from the input file and put each line of instruction into the array
+        //read from the input file and put each line of instruction into the memory
         int firstIns = 6; // default start location
         try {
-            BufferedReader in = new BufferedReader(new FileReader("/Users/yangboxin/Downloads/panel1/src/main/java/panel2/panel1/LoadFile.txt"));
+            String filePath = getClass().getClassLoader().getResource("LoadFile.txt").getPath();
+            BufferedReader in = new BufferedReader(new FileReader(filePath));
             String str;
             int lineCnt=0;
             while ((str = in.readLine()) != null) {
-                if(lineCnt==0){
+                if(lineCnt==0){// check for explicit start location
                     firstIns = Integer.parseInt(str.split(" ")[0],8);
                     lineCnt++;
                 }
@@ -370,22 +377,16 @@ public class MachineController extends Application {
 
     @FXML
     private void handleHaltButton() {
+        // HALT cancels run
         if (runningTask != null && runningTask.isRunning()) {
             runningTask.cancel();
         }
         System.out.println("The Halt button is pressed");
     }
 
-    private String convert(String oct){
-        StringBuilder res = new StringBuilder();
-        for(int i=5;i>0;i--){
-            res.insert(0,Integer.toString(Integer.parseInt(oct.substring(i,i+1),8),8));
-        }
-        res.insert(0,oct.charAt(0));
-        return res.toString();
-    }
     @FXML
     private void handleStepButton() {
+        // execute the instruction at PC location and increment PC
         String addressBin = TFPC.getText();
         int addressDec = Integer.parseInt(addressBin, 2);
         String instructionBin = memory[addressDec];
@@ -401,6 +402,7 @@ public class MachineController extends Application {
 
     @FXML
     private void handleLoadButton() {
+        // Load MBR with memory at MAR
         String address = TFMAR.getText();
         int decimalAdd = Integer.parseInt(address, 2);
         String memoryContent = memory[decimalAdd];
@@ -410,6 +412,7 @@ public class MachineController extends Application {
 
     @FXML
     private void handleStoreButton() {
+        // Store MBR to memory at MAR
         String content = TFMBR.getText();
         String address = TFMAR.getText();
         int decimalAdd = Integer.parseInt(address, 2);
@@ -419,16 +422,19 @@ public class MachineController extends Application {
 
     @FXML
     private void handleLoadPlusButton() {
+        // not implemented yet
         System.out.println("The Load+ button is pressed");
     }
 
     @FXML
     private void handleStorePlusButton() {
+        // not implemented yet
         System.out.println("The Store+ button is pressed");
     }
 
     @Override
     public void start(Stage stage) throws IOException {
+        // set up the UI
         FXMLLoader fxmlLoader = new FXMLLoader(MachineController.class.getResource("machine.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 600);
         stage.setTitle("Machine Simulator");
