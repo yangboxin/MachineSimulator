@@ -1,0 +1,32 @@
+/* styles.css */
+
+/* Common style for all buttons */
+.button {
+    -fx-background-color:  #333c7a; /* Green background color */
+    -fx-text-fill: white; /* White text color */
+    -fx-font-size: 12px; /* Font size */
+}
+
+/* Style for specific buttons (you can customize these as needed) */
+.button#runButton {
+    -fx-background-color: #333c7a; /* Blue background color */
+}
+
+.button#iplButton {
+    -fx-background-color: #FFC107; /* Yellow background color */
+}
+
+.button#haltButton {
+    -fx-background-color: #F44336; /* Red background color */
+}
+
+.button#stepButton {
+    -fx-background-color: #FF9800; /* Orange background color */
+}
+
+.button#loadButton, .button#storeButton, .button#loadPlusButton, .button#storePlusButton {
+    -fx-background-color: #607D8B; /* Grey background color */
+}
+.button:hover {
+    -fx-background-color: #4e537a;
+}
