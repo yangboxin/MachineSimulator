@@ -2,31 +2,109 @@
 
 /* Common style for all buttons */
 .button {
-    -fx-background-color:  #333c7a; /* Green background color */
-    -fx-text-fill: white; /* White text color */
+    -fx-background-color:  #333c7a; /* Deep blue background */
+    -fx-text-fill: white; /* White text */
     -fx-font-size: 12px; /* Font size */
 }
 
-/* Style for specific buttons (you can customize these as needed) */
-.button#runButton {
-    -fx-background-color: #333c7a; /* Blue background color */
-}
-
-.button#iplButton {
-    -fx-background-color: #FFC107; /* Yellow background color */
-}
-
-.button#haltButton {
-    -fx-background-color: #F44336; /* Red background color */
-}
-
-.button#stepButton {
-    -fx-background-color: #FF9800; /* Orange background color */
-}
-
-.button#loadButton, .button#storeButton, .button#loadPlusButton, .button#storePlusButton {
-    -fx-background-color: #607D8B; /* Grey background color */
-}
+/* Hover state for common button style */
 .button:hover {
-    -fx-background-color: #4e537a;
+    -fx-background-color: #4e537a; /* Slightly lighter blue for hover state */
 }
+
+
+
+/* Specific style for buttons with ID 'RegButtons' */
+#RegButtons {
+ -fx-padding-top: 9px;
+  -fx-padding-right: px;
+  -fx-padding-bottom: 14px;
+  -fx-padding-left: px;
+    /* -fx-padding: 10; /* Equal padding on all sides to ensure circle shape */
+    -fx-background-insets: 0, 0 0 5 0, 0 0 6 0, 0 0 7 0;
+    -fx-background-radius: 50; /* This should be half of the total width/height of the button to make it perfectly circular */
+    -fx-background-color:
+        #333c7a,
+        radial-gradient(center 50% 50%, radius 100%, #4e537a, #333c7a);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75), 4,0,0,1);
+    -fx-font-weight: bold;
+    -fx-font-size: 0.9em; /* Smaller font size */
+}
+
+
+
+/* Hover state for buttons with ID 'RegButtons' */
+#RegButtons:hover {
+    -fx-background-color:
+        #4e537a,
+        radial-gradient(center 50% 50%, radius 100%, #666a8a, #4e537a); /* Adjusted gradient colors for hover */
+}
+
+#RegButtons:pressed {
+    -fx-padding-top: 5px;
+      -fx-padding-right: px;
+      -fx-padding-bottom: 19px;
+      -fx-padding-left: px;
+
+    -fx-background-insets:  2 0 0 0, 2 0 3 0, 2 0 4 0, 2 0 5 0; /* Adjust insets to enhance the pressed effect */
+    -fx-background-radius: 50; /* Keep the circular shape */
+    -fx-background-color:
+        #2e3570, /* A slightly darker base color for depth */
+        radial-gradient(center 50% 50%, radius 100%, #4c5075, #2e3570); /* Adjust the gradient for a pressed look */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 5, 0, 0, 2); /* Slightly increase the shadow for depth */
+}
+
+
+
+/* Style for text inside buttons with ID 'RegButtons' */
+#RegButtons Text {
+    -fx-fill: white; /* White text color */
+    -fx-effect: dropshadow( gaussian , #000000 , 0,0,0,2 ); /* Text shadow for depth, changed to black for visibility */
+}
+
+
+/* Specific style for buttons with ID 'RegButtons' */
+#OPButtons{
+    -fx-padding: 8 15 15 15; /* Padding for top, right, bottom, left */
+    -fx-background-insets: 0, 0 0 5 0, 0 0 6 0, 0 0 7 0; /* Insets for the multiple background layers */
+    -fx-background-radius: 8; /* Rounded corner radius */
+    -fx-background-color:
+        #333c7a, /* Base color */
+        radial-gradient(center 50% 50%, radius 100%, #4e537a, #333c7a); /* Gradient overlay */
+    -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 ); /* Shadow effect */
+    -fx-font-weight: bold; /* Bold font weight */
+    -fx-font-size: 1.1em; /* Larger font size */
+}
+
+/* Hover state for buttons with ID 'RegButtons' */
+#OPButtons:hover {
+    -fx-background-color:
+        #4e537a,
+        radial-gradient(center 50% 50%, radius 100%, #666a8a, #4e537a); /* Adjusted gradient colors for hover */
+}
+
+/* Pressed state for buttons with ID 'RegButtons' */
+#OPButtons:pressed {
+    -fx-padding: 10 15 13 15; /* Adjusted padding to simulate button press */
+    -fx-background-insets: 2 0 0 0, 2 0 3 0, 2 0 4 0, 2 0 5 0; /* Adjusted insets for depth effect */
+}
+
+/* Style for text inside buttons with ID 'RegButtons' */
+#OPButtons Text {
+    -fx-fill: white; /* White text color */
+    -fx-effect: dropshadow( gaussian , #000000 , 0,0,0,2 ); /* Text shadow for depth, changed to black for visibility */
+}
+
+#panel{
+    -fx-background-image: url('panel2.panel1.img1.jpg');
+    -fx-background-repeat: stretch;
+     -fx-background-size: 900 506;
+    -fx-background-position: center center;
+    -fx-effect: dropshadow(three-pass-box, black, 30, 0.5, 0, 0);
+
+}
+
+#TF {
+    -fx-font-family: 'STZhongsong';
+}
+

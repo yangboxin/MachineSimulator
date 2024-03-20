@@ -1,0 +1,2 @@
+Main-Class: panel2.panel1.MachineController
+Class-Path: lib/javafx-sdk-11/lib/javafx.base.jar lib/javafx-sdk-11/lib/javafx.graphics.jar lib/javafx-sdk-11/lib/javafx.controls.jar lib/javafx-sdk-11/lib/javafx.fxml.jar

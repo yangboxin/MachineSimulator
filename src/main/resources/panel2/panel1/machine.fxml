@@ -1,130 +1,155 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="410.0" prefWidth="693.0" style="-fx-background-color: #7FFFD4;" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="panel2.panel1.MachineController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="410.0" prefWidth="693.0" style="-fx-background-color: #7FFFD4;" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="panel2.panel1.MachineController">
    <children>
+      <ImageView fx:id="imageView" fitHeight="800.0" fitWidth="800.0">
+
+         <image>
+            <Image url="@img1.jpg" />
+         </image>
+      </ImageView>
       <Label layoutX="101.0" layoutY="64.0" text="GPR">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <TextField fx:id="TFGPR0" layoutX="64.0" layoutY="83.0" prefHeight="25.0" prefWidth="145.0" />
-      <TextField fx:id="TFGPR3" layoutX="64.0" layoutY="180.0" prefHeight="25.0" prefWidth="145.0" />
-      <TextField fx:id="TFGPR2" layoutX="64.0" layoutY="148.0" prefHeight="25.0" prefWidth="145.0" />
-      <TextField fx:id="TFGPR1" layoutX="64.0" layoutY="114.0" prefHeight="25.0" prefWidth="145.0" />
-      <Label layoutX="48.0" layoutY="118.0" text="1">
+      <TextField id="TF" fx:id="TFGPR0" layoutX="64.0" layoutY="83.0" prefHeight="25.0" prefWidth="145.0">
+         </TextField>
+      <TextField id="TF" fx:id="TFGPR3" layoutX="64.0" layoutY="180.0" prefHeight="25.0" prefWidth="145.0">
+         </TextField>
+      <TextField id="TF" fx:id="TFGPR2" layoutX="64.0" layoutY="148.0" prefHeight="25.0" prefWidth="145.0">
+        </TextField>
+      <TextField id="TF" fx:id="TFGPR1" layoutX="64.0" layoutY="114.0" prefHeight="25.0" prefWidth="145.0">
+         </TextField>
+      <Label layoutX="52.0" layoutY="118.0" text="1">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <Label layoutX="49.0" layoutY="152.0" text="2">
+      <Label layoutX="52.0" layoutY="152.0" text="2">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <Label layoutX="49.0" layoutY="184.0" text="3">
+      <Label layoutX="52.0" layoutY="184.0" text="3">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <Label layoutX="49.0" layoutY="87.0" text="0">
+      <Label layoutX="52.0" layoutY="87.0" text="0">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <Label layoutX="296.0" layoutY="88.0" text="IXR">
+      <Label layoutX="310.0" layoutY="94.0" text="IXR">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <TextField fx:id="TFIXR2" layoutX="255.0" layoutY="182.0" prefHeight="25.0" prefWidth="145.0" />
-      <TextField fx:id="TFIXR1" layoutX="255.0" layoutY="151.0" prefHeight="25.0" prefWidth="145.0" />
-      <TextField fx:id="TFIXR0" layoutX="255.0" layoutY="117.0" prefHeight="25.0" prefWidth="145.0" />
-      <Label layoutX="239.0" layoutY="121.0" text="1">
+      <TextField id="TF" fx:id="TFIXR2" layoutX="255.0" layoutY="182.0" prefHeight="25.0" prefWidth="145.0">
+         </TextField>
+      <TextField id="TF" fx:id="TFIXR1" layoutX="255.0" layoutY="151.0" prefHeight="25.0" prefWidth="145.0">
+         </TextField>
+      <TextField id="TF" fx:id="TFIXR0" layoutX="255.0" layoutY="117.0" prefHeight="25.0" prefWidth="145.0">
+         </TextField>
+      <Label layoutX="244.0" layoutY="121.0" text="1">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <Label layoutX="240.0" layoutY="155.0" text="2">
+      <Label layoutX="245.0" layoutY="155.0" text="2">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <Label layoutX="240.0" layoutY="187.0" text="3">
+      <Label layoutX="245.0" layoutY="187.0" text="3">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <Button fx:id="GPR0" layoutX="209.0" layoutY="84.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0"/>
-      <Button fx:id="GPR1" layoutX="209.0" layoutY="115.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
-      <Button fx:id="GPR2" layoutX="209.0" layoutY="149.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
-      <Button fx:id="GPR3" layoutX="209.0" layoutY="181.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
-      <Button fx:id="IXR0" layoutX="399.0" layoutY="117.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
-      <Button fx:id="IXR1" layoutX="399.0" layoutY="151.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
-      <Button fx:id="IXR2" layoutX="399.0" layoutY="182.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
-      <Button fx:id="MBR_Button" layoutX="658.0" layoutY="154.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
-      <TextField fx:id="TFMAR" layoutX="511.0" layoutY="123.0" prefHeight="25.0" prefWidth="145.0" />
-      <TextField fx:id="TFMBR" layoutX="511.0" layoutY="154.0" prefHeight="25.0" prefWidth="145.0" />
-      <TextField fx:id="TFIR" layoutX="511.0" layoutY="186.0" prefHeight="25.0" prefWidth="145.0" />
-      <Button fx:id="IR_Button" layoutX="658.0" layoutY="186.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
-      <Button fx:id="MAR_Button" layoutX="658.0" layoutY="123.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
-      <Label layoutX="474.0" layoutY="126.0" text="MAR">
+      <Button id="RegButtons" fx:id="GPR0" layoutX="211.0" layoutY="84.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
+      <Button id="RegButtons" fx:id="GPR1" layoutX="212.0" layoutY="115.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
+      <Button id="RegButtons" fx:id="GPR2" layoutX="212.0" layoutY="149.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
+      <Button id="RegButtons" fx:id="GPR3" layoutX="213.0" layoutY="181.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
+      <Button id="RegButtons" fx:id="IXR0" layoutX="402.0" layoutY="117.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
+      <Button id="RegButtons" fx:id="IXR1" layoutX="403.0" layoutY="151.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
+      <Button id="RegButtons" fx:id="IXR2" layoutX="403.0" layoutY="182.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
+      <Button id="RegButtons" fx:id="MBR_Button" layoutX="660.0" layoutY="154.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
+      <TextField id="TF" fx:id="TFMAR" layoutX="511.0" layoutY="123.0" prefHeight="25.0" prefWidth="145.0">
+         </TextField>
+      <TextField id="TF" fx:id="TFMBR" layoutX="511.0" layoutY="154.0" prefHeight="25.0" prefWidth="145.0">
+         </TextField>
+      <TextField id="TF" fx:id="TFIR" layoutX="511.0" layoutY="186.0" prefHeight="25.0" prefWidth="145.0">
+         </TextField>
+      <Button id="RegButtons" fx:id="IR_Button" layoutX="660.0" layoutY="186.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
+      <Button id="RegButtons" fx:id="MAR_Button" layoutX="660.0" layoutY="123.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
+      <Label layoutX="478.0" layoutY="126.0" text="MAR">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <Label layoutX="474.0" layoutY="157.0" text="MBR">
+      <Label layoutX="478.0" layoutY="157.0" text="MBR">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <Label layoutX="474.0" layoutY="189.0" text="IR">
+      <Label layoutX="478.0" layoutY="189.0" text="IR">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <TextField fx:id="TFPC" layoutX="511.0" layoutY="93.0" prefHeight="25.0" prefWidth="145.0" />
-      <Label layoutX="474.0" layoutY="96.0" text="PC">
+      <TextField id="TF" fx:id="TFPC" layoutX="511.0" layoutY="93.0" prefHeight="25.0" prefWidth="145.0">
+         </TextField>
+      <Label layoutX="478.0" layoutY="96.0" text="PC">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <Label layoutX="48.0" layoutY="233.0" text="BINARY">
+      <Label layoutX="43.0" layoutY="233.0" text="BINARY">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <TextField fx:id="TFBINARY" layoutX="26.0" layoutY="252.0" prefHeight="25.0" prefWidth="173.0" style="-fx-border-style: 40;" />
-      <Label layoutX="51.0" layoutY="286.0" text="OCTAL">
+      <TextField id="TF" fx:id="TFBINARY" layoutX="26.0" layoutY="252.0" prefHeight="25.0" prefWidth="173.0">
+         </TextField>
+      <Label layoutX="45.0" layoutY="286.0" text="OCTAL">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <TextField fx:id="TFOCTAL" layoutX="25.0" layoutY="305.0" prefHeight="25.0" prefWidth="173.0" style="-fx-border-style: 40;" />
-      <Button fx:id="RUN_Button" layoutX="304.0" layoutY="252.0" mnemonicParsing="false" onAction="#handleRunButton" prefHeight="25.0" prefWidth="41.0" text="RUN" />
-      <Button fx:id="IPL_Button" layoutX="255.0" layoutY="252.0" mnemonicParsing="false" onAction="#handleIPLButton" prefHeight="25.0" prefWidth="41.0" text="IPL" />
-      <Button fx:id="HALT_Button" layoutX="404.0" layoutY="252.0" mnemonicParsing="false" onAction="#handleHaltButton" prefHeight="25.0" prefWidth="48.0" text="HALT" />
-      <Button fx:id="STEP_Button" layoutX="351.0" layoutY="252.0" mnemonicParsing="false" onAction="#handleStepButton" prefHeight="25.0" prefWidth="48.0" text="STEP" />
+      <TextField id="TF" fx:id="TFOCTAL" layoutX="25.0" layoutY="305.0" prefHeight="25.0" prefWidth="173.0">
+         </TextField>
+      <Button id="OPButtons" fx:id="RUN_Button" layoutX="297.0" layoutY="252.0" mnemonicParsing="false" onAction="#handleRunButton" prefHeight="42.0" prefWidth="63.0" text="RUN" />
+      <Button id="OPButtons" fx:id="IPL_Button" layoutX="230.0" layoutY="252.0" mnemonicParsing="false" onAction="#handleIPLButton" prefHeight="42.0" prefWidth="57.0" text="IPL" />
+      <Button id="OPButtons" fx:id="HALT_Button" layoutX="444.0" layoutY="252.0" mnemonicParsing="false" onAction="#handleHaltButton" prefHeight="42.0" prefWidth="72.0" text="HALT" />
+      <Button id="OPButtons" fx:id="STEP_Button" layoutX="371.0" layoutY="252.0" mnemonicParsing="false" onAction="#handleStepButton" prefHeight="42.0" prefWidth="63.0" text="STEP" />
       <Label layoutX="281.0" layoutY="14.0" prefHeight="32.0" prefWidth="165.0" text="SIMULATOR">
          <font>
-            <Font name="System Bold" size="22.0" />
+            <Font name="Bell MT Bold" size="22.0" />
          </font>
       </Label>
-      <Button fx:id="LOAD_Button" layoutX="252.0" layoutY="305.0" mnemonicParsing="false" onAction="#handleLoadButton" prefHeight="25.0" prefWidth="48.0" text="LOAD" />
-      <Button fx:id="STORE_Button" layoutX="323.0" layoutY="305.0" mnemonicParsing="false" onAction="#handleStoreButton" prefHeight="25.0" prefWidth="57.0" text="STORE" />
-      <Button fx:id="LOADPLUS_Button" layoutX="252.0" layoutY="340.0" mnemonicParsing="false" onAction="#handleLoadPlusButton" prefHeight="25.0" prefWidth="57.0" text="LOAD+" />
-      <Button fx:id="STOREPLUS_Button" layoutX="323.0" layoutY="340.0" mnemonicParsing="false" onAction="#handleStorePlusButton" prefHeight="25.0" prefWidth="63.0" text="STORE+" />
-      <TextField fx:id="TFCC" layoutX="607.0" layoutY="252.0" prefHeight="25.0" prefWidth="72.0" />
-      <TextField fx:id="TFMFR" layoutX="607.0" layoutY="296.0" prefHeight="25.0" prefWidth="72.0" />
-      <Label layoutX="579.0" layoutY="255.0" text="CC">
+      <Button id="OPButtons" fx:id="LOAD_Button" layoutX="259.0" layoutY="305.0" mnemonicParsing="false" onAction="#handleLoadButton" prefHeight="42.0" prefWidth="72.0" text="LOAD" />
+      <Button id="OPButtons" fx:id="STORE_Button" layoutX="381.0" layoutY="305.0" mnemonicParsing="false" onAction="#handleStoreButton" prefHeight="42.0" prefWidth="72.0" text="STORE" />
+      <Button id="OPButtons" fx:id="LOADPLUS_Button" layoutX="259.0" layoutY="354.0" mnemonicParsing="false" onAction="#handleLoadPlusButton" prefHeight="42.0" prefWidth="82.0" text="LOAD+" />
+      <Button id="OPButtons" fx:id="STOREPLUS_Button" layoutX="381.0" layoutY="354.0" mnemonicParsing="false" onAction="#handleStorePlusButton" prefHeight="42.0" prefWidth="82.0" text="STORE+" />
+      <TextField id="TF" fx:id="TFCC" layoutX="607.0" layoutY="252.0" prefHeight="25.0" prefWidth="72.0">
+        </TextField>
+      <TextField id="TF" fx:id="TFMFR" layoutX="607.0" layoutY="296.0" prefHeight="25.0" prefWidth="72.0">
+         </TextField>
+      <Label layoutX="582.0" layoutY="255.0" text="CC">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <Label layoutX="572.0" layoutY="299.0" prefHeight="19.0" prefWidth="30.0" text="MFR">
+      <Label layoutX="575.0" layoutY="299.0" prefHeight="19.0" prefWidth="30.0" text="MFR">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
@@ -139,6 +164,7 @@
             <Font size="13.0" />
          </font>
       </Label>
-      <Button fx:id="PC_Button" layoutX="658.0" layoutY="91.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
+      <Button id="RegButtons" fx:id="PC_Button" layoutX="660.0" layoutY="91.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
+      <TextField id="TF" fx:id="INPUTFILE" layoutX="27.0" layoutY="434.0" prefHeight="25.0" prefWidth="392.0" />
    </children>
 </Pane>

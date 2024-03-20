@@ -26,6 +26,8 @@ public class MachineController extends Application {
     private String IR = "0000000000000000";
     private String CC = "0000";
     private String MFR = "0000";
+    private int endAdd=6;
+    private int firstAdd=6;
 
     private Task<Void> runningTask; //
     private Thread runningThread;
@@ -87,6 +89,8 @@ public class MachineController extends Application {
     private TextField TFCC;
     @FXML
     private TextField TFMFR;
+    @FXML
+    private TextField INPUTFILE;
     @FXML
     private Button GPR0;
     @FXML
@@ -225,7 +229,7 @@ public class MachineController extends Application {
                 int addressDec = Integer.parseInt(address, 2);
                 int ea = contentDec+addressDec;
                 if(ea>2048){
-                    return 4096; // memory index out of range
+                    return -2; // memory index out of range
                 }
                 effectiveAddress = ea;
             }
@@ -250,6 +254,9 @@ public class MachineController extends Application {
                 effectiveAddress = Integer.parseInt(memory[indexedAdd],2);
             }
         }
+        if(effectiveAddress<=5 && effectiveAddress>=0){
+            return -1;
+        }
         return effectiveAddress;
     }
     private int handleLoadStore(String instruction){
@@ -270,7 +277,9 @@ public class MachineController extends Application {
 
         // Calculate effective address (EA)
         int EA = calculateEA(indexRegisters, addressingMode, address);
-
+        if(EA<0){
+            return -1; // unreachable EA
+        }
         switch (opcode) {
             case "000001"://LDR r,x,address,[i]
                 String fromMem = memory[EA];
@@ -315,6 +324,12 @@ public class MachineController extends Application {
                     }
                     String incrementAdd = String.format("%12s",Integer.toBinaryString(addressDec)).replace(' ','0');
                     TFPC.setText(incrementAdd);
+                    TFMBR.setText(memory[addressDec]);
+                    TFMAR.setText(incrementAdd);
+                    if(addressDec==endAdd){
+                        TFPC.setText(String.format("%16s",Integer.toBinaryString(firstAdd)).replace(' ','0'));
+                        break;
+                    }
                     Thread.sleep(1000);// sleep 1s each cycle for a clear display in panel
                 }
                 return null;
@@ -348,13 +363,18 @@ public class MachineController extends Application {
         //read from the input file and put each line of instruction into the memory
         int firstIns = 6; // default start location
         try {
-            String filePath = getClass().getClassLoader().getResource("LoadFile.txt").getPath();
+            //String filePath = getClass().getClassLoader().getResource("LoadFile.txt").getPath();
+            String filePath=INPUTFILE.getText();
+            if(filePath.length()==0){
+                INPUTFILE.setText("please input a valid file path");
+            }
             BufferedReader in = new BufferedReader(new FileReader(filePath));
             String str;
             int lineCnt=0;
             while ((str = in.readLine()) != null) {
                 if(lineCnt==0){// check for explicit start location
                     firstIns = Integer.parseInt(str.split(" ")[0],8);
+                    firstAdd = firstIns;
                     lineCnt++;
                 }
                 String addressOct = str.split(" ")[0];
@@ -366,12 +386,14 @@ public class MachineController extends Application {
                     break;
                 }
                 memory[addressDec] = instructionBin;
+                endAdd=addressDec;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         String firstLocation = String.format("%12s",Integer.toBinaryString(firstIns)).replace(' ','0');
         TFPC.setText(firstLocation);
+        TFMAR.setText(firstLocation);
         System.out.println("The IPL button is pressed");
     }
 
@@ -397,6 +419,11 @@ public class MachineController extends Application {
         addressDec++;
         String incrementAdd = String.format("%12s",Integer.toBinaryString(addressDec)).replace(' ','0');
         TFPC.setText(incrementAdd);
+        TFMBR.setText(memory[addressDec]);
+        TFMAR.setText(incrementAdd);
+        if(addressDec==endAdd){
+            TFPC.setText(String.format("%16s",Integer.toBinaryString(firstAdd)).replace(' ','0'));
+        }
         System.out.println("The Step button is pressed");
     }
 
