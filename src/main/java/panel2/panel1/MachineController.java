@@ -16,24 +16,18 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class MachineController extends Application {
-    // memory layout
-    private String[] memory = new String[2048];
-    private String[] GPR = new String[4];
-    private String[] IXR = new String[3];
-    private String PC = "000000000000";
-    private String MAR = "000000000000";
-    private String MBR = "0000000000000000";
-    private String IR = "0000000000000000";
-    private String CC = "0000";
-    private String MFR = "0000";
-    private int endAdd=6;
-    private int firstAdd=6;
 
     private Task<Void> runningTask; //
     private Thread runningThread;
     private HashSet<String> LoadStore;
     private HashMap<String, TextField> regMap;
     private HashMap<String, TextField> ixrMap;
+
+    private Memory memory;
+
+    private CPU cpu;
+
+
     @FXML
     private Button runButton;
 
@@ -113,12 +107,24 @@ public class MachineController extends Application {
     private Button MBR_Button;
     @FXML
     private Button IR_Button;
+    @FXML
+    private void handlecompare() {
+        // not implemented yet
+        System.out.println("The compare button is pressed");
+    }
+
+    @FXML
+    private void handleread20numbers() {
+        // not implemented yet
+        System.out.println("The read 20 numbers button is pressed");
+    }
+
 
     public void init(){
         // initialization for memory-related
-        Arrays.fill(memory, "0000000000000000");
-        Arrays.fill(GPR, "0000000000000000");
-        Arrays.fill(IXR, "0000000000000000");
+//        Arrays.fill(memory, "0000000000000000");
+        //Arrays.fill(GPR, "0000000000000000");
+        //Arrays.fill(IXR, "0000000000000000");
         regMap = new HashMap<>();
         regMap.put("00", TFGPR0);
         regMap.put("01", TFGPR1);
@@ -134,6 +140,11 @@ public class MachineController extends Application {
         LoadStore.add("000011");
         LoadStore.add("000100");
         LoadStore.add("000101");
+
+        memory = new Memory();
+        cpu = new CPU();
+        cpu.init();
+
     }
     @FXML
     private void initialize() {
@@ -154,56 +165,89 @@ public class MachineController extends Application {
         });
         GPR0.setOnAction(event -> {
             TFGPR0.setText(TFBINARY.getText());
-            GPR[0] = TFBINARY.getText(); // update GPR[]
+            updateFromUI2CPU();
         });
         GPR1.setOnAction(event -> {
             TFGPR1.setText(TFBINARY.getText());
-            GPR[1] = TFBINARY.getText(); // update GPR[]
+            updateFromUI2CPU();
         });
         GPR2.setOnAction(event -> {
             TFGPR2.setText(TFBINARY.getText());
-            GPR[2] = TFBINARY.getText(); // update GPR[]
+            updateFromUI2CPU();
         });
         GPR3.setOnAction(event -> {
             TFGPR3.setText(TFBINARY.getText());
-            GPR[3] = TFBINARY.getText(); // update GPR[]
+            updateFromUI2CPU();
         });
         IXR0.setOnAction(event -> {
             TFIXR0.setText(TFBINARY.getText());
-            IXR[0] = TFBINARY.getText(); // update IXR[]
+            updateFromUI2CPU();
         });
         IXR1.setOnAction(event -> {
             TFIXR1.setText(TFBINARY.getText());
-            IXR[1] = TFBINARY.getText(); // update IXR[]
+            updateFromUI2CPU();
         });
         IXR2.setOnAction(event -> {
             TFIXR2.setText(TFBINARY.getText());
-            IXR[2] = TFBINARY.getText(); // update IXR[]
+            updateFromUI2CPU();
         });
         PC_Button.setOnAction(event -> {
             String binaryData = TFBINARY.getText();
             binaryData = String.format("%12s", binaryData).replace(' ', '0');
             String lowest12bits = binaryData.substring(binaryData.length()-12);
             TFPC.setText(lowest12bits);
-            PC = lowest12bits; // update pc
+            updateFromUI2CPU();
         });
         MAR_Button.setOnAction(event -> {
             String binaryData = TFBINARY.getText();
             binaryData = String.format("%12s", binaryData).replace(' ', '0');
             String lowest12bits = binaryData.substring(binaryData.length()-12);
             TFMAR.setText(lowest12bits);
-            MAR = lowest12bits; // update MAr
+            updateFromUI2CPU();
         });
         MBR_Button.setOnAction(event -> {
             TFMBR.setText(TFBINARY.getText());
-            MBR = TFBINARY.getText(); // update MBR
+            updateFromUI2CPU();
         });
         IR_Button.setOnAction(event -> {
             TFIR.setText(TFBINARY.getText());
-            IR = TFBINARY.getText(); // update IR
+            updateFromUI2CPU();
         });
     }
-    private int parse(String instruction){
+
+    private int updateFromUI2CPU(){
+        cpu.setGPR(0,TFGPR0.getText());
+        cpu.setGPR(1,TFGPR1.getText());
+        cpu.setGPR(2,TFGPR2.getText());
+        cpu.setGPR(3,TFGPR3.getText());
+        cpu.setIXR(0,TFIXR0.getText());
+        cpu.setIXR(1,TFIXR1.getText());
+        cpu.setIXR(2,TFIXR2.getText());
+        cpu.setPC(TFPC.getText());
+        cpu.setMAR(TFMAR.getText());
+        cpu.setMBR(TFMBR.getText());
+        cpu.setIR(TFIR.getText());
+        cpu.setCC(TFCC.getText());
+        cpu.setMFR(TFMFR.getText());
+        return 0;
+    }
+    private int updateFromCPU2UI(){
+        TFGPR0.setText(cpu.getGPR(0));
+        TFGPR1.setText(cpu.getGPR(1));
+        TFGPR2.setText(cpu.getGPR(2));
+        TFGPR3.setText(cpu.getGPR(3));
+        TFIXR0.setText(cpu.getIXR(0));
+        TFIXR1.setText(cpu.getIXR(1));
+        TFIXR2.setText(cpu.getIXR(2));
+        TFPC.setText(cpu.getPC());
+        TFMAR.setText(cpu.getMAR());
+        TFMBR.setText(cpu.getMBR());
+        TFIR.setText(cpu.getIR());
+        TFCC.setText(cpu.getCC());
+        TFMFR.setText(cpu.getMFR());
+        return 0;
+    }
+    /*private int parse(String instruction){
         // input is instruction's binary form
         if(instruction.length()!=16)
             return 10; // wrong format; reserved for debug
@@ -213,8 +257,8 @@ public class MachineController extends Application {
         }
         // easy to develop other instructions under this structure
         return 1;// error;
-    }
-    private int calculateEA(String indexRegisters, String addressingMode, String address){
+    }*/
+   /* private int calculateEA(String indexRegisters, String addressingMode, String address){
         int effectiveAddress = 0;
         if (addressingMode.equals("0")) {
             // Direct addressing mode
@@ -228,7 +272,7 @@ public class MachineController extends Application {
                 int contentDec = Integer.parseInt(contentBin, 2);
                 int addressDec = Integer.parseInt(address, 2);
                 int ea = contentDec+addressDec;
-                if(ea>2048){
+                if(ea>memory.getMemorySize()){
                     return -2; // memory index out of range
                 }
                 effectiveAddress = ea;
@@ -239,7 +283,7 @@ public class MachineController extends Application {
             // for now this does not work (need memory)
             if (indexRegisters.equals("00")) {
                 int addressDec = Integer.parseInt(address,2);
-                effectiveAddress = Integer.parseInt(memory[addressDec],2);
+                effectiveAddress = Integer.parseInt(memory.getMemoryContent(addressDec), 2);
             }
             else {
                 // Convert binary strings to integers and calculate the effective address
@@ -248,18 +292,20 @@ public class MachineController extends Application {
                 int contentDec = Integer.parseInt(contentBin, 2);
                 int addressDec = Integer.parseInt(address,2);
                 int indexedAdd = contentDec+addressDec;
-                if(indexedAdd>2048){
+                if(indexedAdd>memory.getMemorySize()){
                     return 4096;// memory index out of range
                 }
-                effectiveAddress = Integer.parseInt(memory[indexedAdd],2);
+//                effectiveAddress = Integer.parseInt(memory[indexedAdd],2);
+                effectiveAddress = Integer.parseInt(memory.getMemoryContent(indexedAdd), 2);
+
             }
         }
         if(effectiveAddress<=5 && effectiveAddress>=0){
             return -1;
         }
         return effectiveAddress;
-    }
-    private int handleLoadStore(String instruction){
+    }*/
+    /*private int handleLoadStore(String instruction){
         // Extracting opcode
         String opcode = instruction.substring(0, 6);
 
@@ -282,25 +328,37 @@ public class MachineController extends Application {
         }
         switch (opcode) {
             case "000001"://LDR r,x,address,[i]
-                String fromMem = memory[EA];
-                regMap.get(generalRegisters).setText(String.format("%16s",fromMem).replace(' ','0'));
+//                String fromMem = memory[EA];
+//                regMap.get(generalRegisters).setText(String.format("%16s",fromMem).replace(' ','0'));
+                String fromMem = memory.getMemoryContent(EA);
+                regMap.get(generalRegisters).setText(String.format("%16s", fromMem).replace(' ', '0'));
+                updateFromUI2CPU();
                 return 0;
             case "000010"://STR r,x,address,[i]
-                memory[EA] = String.format("%16s",regMap.get(generalRegisters).getText()).replace(' ','0');
+//                memory[EA] = String.format("%16s",regMap.get(generalRegisters).getText()).replace(' ','0');
+                memory.setMemoryContent(EA, String.format("%16s", regMap.get(generalRegisters).getText()).replace(' ', '0'));
                 return 0;
             case "000011"://LDA r,x,address,[i]
                 regMap.get(generalRegisters).setText(String.format("%16s", address).replace(' ','0'));
+                updateFromUI2CPU();
                 return 0;
             case "000100"://LDX x,address,[i]
-                ixrMap.get(indexRegisters).setText(String.format("%16s",memory[EA]).replace(' ','0'));
+//                ixrMap.get(indexRegisters).setText(String.format("%16s",memory[EA]).replace(' ','0'));
+                String fromMemm = memory.getMemoryContent(EA);
+                ixrMap.get(generalRegisters).setText(String.format("%16s", fromMemm).replace(' ', '0'));
+                updateFromUI2CPU();
                 return 0;
             case "000101"://STX x,address,[i]
-                memory[EA] = String.format("%16s",ixrMap.get(indexRegisters).getText()).replace(' ','0');
+//                memory[EA] = String.format("%16s",ixrMap.get(indexRegisters).getText()).replace(' ','0');
+                memory.setMemoryContent(EA, String.format("%16s", ixrMap.get(indexRegisters).getText()).replace(' ', '0'));
                 return 0;
             default:
                 return 1;
         }
-    }
+    }*/
+
+
+
     @FXML
     private void handleRunButton() {
         // concurrency via Task
@@ -309,27 +367,8 @@ public class MachineController extends Application {
             protected Void call() throws Exception {
                 while(!isCancelled()){
                     // HALT controls isCancelled()
-                    String addressBin = TFPC.getText();
-                    int addressDec = Integer.parseInt(addressBin, 2);
-                    String instructionBin = memory[addressDec];
-                    String dataChk = instructionBin.substring(0,6);
-                    if(dataChk.equals("000000")){// check if input is data
-                        memory[addressDec]=instructionBin.substring(6);
-                    }
-                    int res = parse(instructionBin);// deliver to parse to determine which instruction this is and execute
-                    addressDec++;
-                    if(addressDec>2048){
-                        runningTask.cancel();
-                        break;
-                    }
-                    String incrementAdd = String.format("%12s",Integer.toBinaryString(addressDec)).replace(' ','0');
-                    TFPC.setText(incrementAdd);
-                    TFMBR.setText(memory[addressDec]);
-                    TFMAR.setText(incrementAdd);
-                    if(addressDec==endAdd){
-                        TFPC.setText(String.format("%16s",Integer.toBinaryString(firstAdd)).replace(' ','0'));
-                        break;
-                    }
+                    cpu.step(memory);
+                    updateFromCPU2UI();
                     Thread.sleep(1000);// sleep 1s each cycle for a clear display in panel
                 }
                 return null;
@@ -346,7 +385,8 @@ public class MachineController extends Application {
     private void handleIPLButton() {
         // Initialize the machine, clear memory
         init();
-        TFGPR0.setText(String.format("%016d", 0));
+        updateFromCPU2UI();
+        /*TFGPR0.setText(String.format("%016d", 0));
         TFGPR1.setText(String.format("%016d", 0));
         TFGPR2.setText(String.format("%016d", 0));
         TFGPR3.setText(String.format("%016d", 0));
@@ -358,43 +398,16 @@ public class MachineController extends Application {
         TFMBR.setText(String.format("%016d", 0));
         TFIR.setText(String.format("%016d", 0));
         TFCC.setText(String.format("%04d", 0));
-        TFMFR.setText(String.format("%04d", 0));
+        TFMFR.setText(String.format("%04d", 0));*/
 
-        //read from the input file and put each line of instruction into the memory
-        int firstIns = 6; // default start location
-        try {
-            //String filePath = getClass().getClassLoader().getResource("LoadFile.txt").getPath();
-            String filePath=INPUTFILE.getText();
-            if(filePath.length()==0){
-                INPUTFILE.setText("please input a valid file path");
-            }
-            BufferedReader in = new BufferedReader(new FileReader(filePath));
-            String str;
-            int lineCnt=0;
-            while ((str = in.readLine()) != null) {
-                if(lineCnt==0){// check for explicit start location
-                    firstIns = Integer.parseInt(str.split(" ")[0],8);
-                    firstAdd = firstIns;
-                    lineCnt++;
-                }
-                String addressOct = str.split(" ")[0];
-                String instructionOct = str.split(" ")[1];
-                int addressDec = Integer.parseInt(addressOct, 8);
-                String instructionBin = String.format("%16s",Integer.toBinaryString(Integer.parseInt(instructionOct, 8))).replace(' ', '0');
-                if(addressDec>2048){
-                    System.out.println("address index out of range");
-                    break;
-                }
-                memory[addressDec] = instructionBin;
-                endAdd=addressDec;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String firstLocation = String.format("%12s",Integer.toBinaryString(firstIns)).replace(' ','0');
+        String filePath = INPUTFILE.getText();
+        memory.loadInstructionsFromFile(filePath);
+        String firstLocation = String.format("%12s", Integer.toBinaryString(memory.getFirstAddress())).replace(' ', '0');
         TFPC.setText(firstLocation);
         TFMAR.setText(firstLocation);
+        updateFromUI2CPU();
         System.out.println("The IPL button is pressed");
+
     }
 
     @FXML
@@ -409,22 +422,29 @@ public class MachineController extends Application {
     @FXML
     private void handleStepButton() {
         // execute the instruction at PC location and increment PC
-        String addressBin = TFPC.getText();
+        /*String addressBin = TFPC.getText();
         int addressDec = Integer.parseInt(addressBin, 2);
-        String instructionBin = memory[addressDec];
+//        String instructionBin = memory[addressDec];
+        String instructionBin = memory.getInstruction(addressDec);
         if(instructionBin.substring(0,6).equals("000000")){
-            memory[addressDec]=String.format("%16s",instructionBin.substring(6)).replace(' ','0');
+//            memory[addressDec]=String.format("%16s",instructionBin.substring(6)).replace(' ','0');
+            memory.setMemoryContent(addressDec, String.format("%16s", instructionBin.substring(6)).replace(' ', '0'));
         }
         int res = parse(instructionBin);
         addressDec++;
         String incrementAdd = String.format("%12s",Integer.toBinaryString(addressDec)).replace(' ','0');
         TFPC.setText(incrementAdd);
-        TFMBR.setText(memory[addressDec]);
+//        TFMBR.setText(memory[addressDec]);
+        TFMBR.setText(memory.getInstruction(addressDec));
         TFMAR.setText(incrementAdd);
-        if(addressDec==endAdd){
-            TFPC.setText(String.format("%16s",Integer.toBinaryString(firstAdd)).replace(' ','0'));
+        if(addressDec==memory.getEndAddress()){
+//            TFPC.setText(String.format("%16s",Integer.toBinaryString(firstAdd)).replace(' ','0'));
+            TFPC.setText(String.format("%16s", Integer.toBinaryString(memory.getFirstAddress())).replace(' ', '0'));
         }
-        System.out.println("The Step button is pressed");
+        updateFromUI2CPU();
+        System.out.println("The Step button is pressed");*/
+        cpu.step(memory);
+        updateFromCPU2UI();
     }
 
     @FXML
@@ -432,8 +452,10 @@ public class MachineController extends Application {
         // Load MBR with memory at MAR
         String address = TFMAR.getText();
         int decimalAdd = Integer.parseInt(address, 2);
-        String memoryContent = memory[decimalAdd];
+        String memoryContent = memory.getMemoryContent(decimalAdd);
+//        String memoryContent = memory[decimalAdd];
         TFMBR.setText(memoryContent);
+        updateFromUI2CPU();
         System.out.println("The Load button is pressed");
     }
 
@@ -443,7 +465,9 @@ public class MachineController extends Application {
         String content = TFMBR.getText();
         String address = TFMAR.getText();
         int decimalAdd = Integer.parseInt(address, 2);
-        memory[decimalAdd] = content;
+//        memory[decimalAdd] = content;
+        memory.setMemoryContent(decimalAdd, content);
+        updateFromUI2CPU();
         System.out.println("The Store button is pressed");
     }
 
