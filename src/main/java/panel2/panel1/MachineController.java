@@ -19,38 +19,10 @@ public class MachineController extends Application {
 
     private Task<Void> runningTask; //
     private Thread runningThread;
-    private HashSet<String> LoadStore;
     private HashMap<String, TextField> regMap;
     private HashMap<String, TextField> ixrMap;
-
     private Memory memory;
-
     private CPU cpu;
-
-
-    @FXML
-    private Button runButton;
-
-    @FXML
-    private Button iplButton;
-
-    @FXML
-    private Button haltButton;
-
-    @FXML
-    private Button stepButton;
-
-    @FXML
-    private Button loadButton;
-
-    @FXML
-    private Button storeButton;
-
-    @FXML
-    private Button loadPlusButton;
-
-    @FXML
-    private Button storePlusButton;
 
     // Add other FXML elements as needed
     @FXML
@@ -86,6 +58,12 @@ public class MachineController extends Application {
     @FXML
     private TextField INPUTFILE;
     @FXML
+    private TextField TFCONSOLEPRINTER;
+    @FXML
+    private TextField TFCacheConsole;
+    @FXML
+    private TextField TFCONSOLEKEYBOARD;
+    @FXML
     private Button GPR0;
     @FXML
     private Button GPR1;
@@ -108,6 +86,10 @@ public class MachineController extends Application {
     @FXML
     private Button IR_Button;
     @FXML
+    private Button Read20numbers;
+    @FXML
+    private Button COMPARE;
+    @FXML
     private void handlecompare() {
         // not implemented yet
         System.out.println("The compare button is pressed");
@@ -122,9 +104,6 @@ public class MachineController extends Application {
 
     public void init(){
         // initialization for memory-related
-//        Arrays.fill(memory, "0000000000000000");
-        //Arrays.fill(GPR, "0000000000000000");
-        //Arrays.fill(IXR, "0000000000000000");
         regMap = new HashMap<>();
         regMap.put("00", TFGPR0);
         regMap.put("01", TFGPR1);
@@ -134,12 +113,6 @@ public class MachineController extends Application {
         ixrMap.put("00", TFIXR0);
         ixrMap.put("01", TFIXR1);
         ixrMap.put("10", TFIXR2);
-        LoadStore = new HashSet<>();
-        LoadStore.add("000001");
-        LoadStore.add("000010");
-        LoadStore.add("000011");
-        LoadStore.add("000100");
-        LoadStore.add("000101");
 
         memory = new Memory();
         cpu = new CPU();
@@ -229,6 +202,8 @@ public class MachineController extends Application {
         cpu.setIR(TFIR.getText());
         cpu.setCC(TFCC.getText());
         cpu.setMFR(TFMFR.getText());
+        //cpu.setConsolePrinter(TFCONSOLEPRINTER.getText());
+        cpu.setConsoleKeyboard(TFCONSOLEKEYBOARD.getText());
         return 0;
     }
     private int updateFromCPU2UI(){
@@ -245,118 +220,10 @@ public class MachineController extends Application {
         TFIR.setText(cpu.getIR());
         TFCC.setText(cpu.getCC());
         TFMFR.setText(cpu.getMFR());
+        TFCONSOLEPRINTER.setText(cpu.getConsolePrinter());
+        //TFCONSOLEKEYBOARD.setText(cpu.getConsoleKeyboard());
         return 0;
     }
-    /*private int parse(String instruction){
-        // input is instruction's binary form
-        if(instruction.length()!=16)
-            return 10; // wrong format; reserved for debug
-        String opcode = instruction.substring(0,6);
-        if(LoadStore.contains(opcode)){
-            return handleLoadStore(instruction);
-        }
-        // easy to develop other instructions under this structure
-        return 1;// error;
-    }*/
-   /* private int calculateEA(String indexRegisters, String addressingMode, String address){
-        int effectiveAddress = 0;
-        if (addressingMode.equals("0")) {
-            // Direct addressing mode
-            if (indexRegisters.equals("00")) {
-                effectiveAddress = Integer.parseInt(address,2);
-            }
-            else {
-                // Convert binary strings to integers and calculate the effective address
-                TextField IDXR = ixrMap.get(indexRegisters);
-                String contentBin = IDXR.getText();
-                int contentDec = Integer.parseInt(contentBin, 2);
-                int addressDec = Integer.parseInt(address, 2);
-                int ea = contentDec+addressDec;
-                if(ea>memory.getMemorySize()){
-                    return -2; // memory index out of range
-                }
-                effectiveAddress = ea;
-            }
-        }
-        else {
-            // Indirect addressing mode
-            // for now this does not work (need memory)
-            if (indexRegisters.equals("00")) {
-                int addressDec = Integer.parseInt(address,2);
-                effectiveAddress = Integer.parseInt(memory.getMemoryContent(addressDec), 2);
-            }
-            else {
-                // Convert binary strings to integers and calculate the effective address
-                TextField IDXR = ixrMap.get(indexRegisters);
-                String contentBin = IDXR.getText();
-                int contentDec = Integer.parseInt(contentBin, 2);
-                int addressDec = Integer.parseInt(address,2);
-                int indexedAdd = contentDec+addressDec;
-                if(indexedAdd>memory.getMemorySize()){
-                    return 4096;// memory index out of range
-                }
-//                effectiveAddress = Integer.parseInt(memory[indexedAdd],2);
-                effectiveAddress = Integer.parseInt(memory.getMemoryContent(indexedAdd), 2);
-
-            }
-        }
-        if(effectiveAddress<=5 && effectiveAddress>=0){
-            return -1;
-        }
-        return effectiveAddress;
-    }*/
-    /*private int handleLoadStore(String instruction){
-        // Extracting opcode
-        String opcode = instruction.substring(0, 6);
-
-        // Extracting general purpose registers
-        String generalRegisters = instruction.substring(6, 8);
-
-        // Extracting index registers
-        String indexRegisters = instruction.substring(8, 10);
-
-        // Extracting addressing bit
-        String addressingMode = instruction.substring(10, 11);
-
-        // Extracting address
-        String address = instruction.substring(11);
-
-        // Calculate effective address (EA)
-        int EA = calculateEA(indexRegisters, addressingMode, address);
-        if(EA<0){
-            return -1; // unreachable EA
-        }
-        switch (opcode) {
-            case "000001"://LDR r,x,address,[i]
-//                String fromMem = memory[EA];
-//                regMap.get(generalRegisters).setText(String.format("%16s",fromMem).replace(' ','0'));
-                String fromMem = memory.getMemoryContent(EA);
-                regMap.get(generalRegisters).setText(String.format("%16s", fromMem).replace(' ', '0'));
-                updateFromUI2CPU();
-                return 0;
-            case "000010"://STR r,x,address,[i]
-//                memory[EA] = String.format("%16s",regMap.get(generalRegisters).getText()).replace(' ','0');
-                memory.setMemoryContent(EA, String.format("%16s", regMap.get(generalRegisters).getText()).replace(' ', '0'));
-                return 0;
-            case "000011"://LDA r,x,address,[i]
-                regMap.get(generalRegisters).setText(String.format("%16s", address).replace(' ','0'));
-                updateFromUI2CPU();
-                return 0;
-            case "000100"://LDX x,address,[i]
-//                ixrMap.get(indexRegisters).setText(String.format("%16s",memory[EA]).replace(' ','0'));
-                String fromMemm = memory.getMemoryContent(EA);
-                ixrMap.get(generalRegisters).setText(String.format("%16s", fromMemm).replace(' ', '0'));
-                updateFromUI2CPU();
-                return 0;
-            case "000101"://STX x,address,[i]
-//                memory[EA] = String.format("%16s",ixrMap.get(indexRegisters).getText()).replace(' ','0');
-                memory.setMemoryContent(EA, String.format("%16s", ixrMap.get(indexRegisters).getText()).replace(' ', '0'));
-                return 0;
-            default:
-                return 1;
-        }
-    }*/
-
 
 
     @FXML
@@ -367,7 +234,7 @@ public class MachineController extends Application {
             protected Void call() throws Exception {
                 while(!isCancelled()){
                     // HALT controls isCancelled()
-                    cpu.step(memory);
+                    cpu.step(memory, TFCONSOLEKEYBOARD.getText());
                     updateFromCPU2UI();
                     Thread.sleep(1000);// sleep 1s each cycle for a clear display in panel
                 }
@@ -386,20 +253,6 @@ public class MachineController extends Application {
         // Initialize the machine, clear memory
         init();
         updateFromCPU2UI();
-        /*TFGPR0.setText(String.format("%016d", 0));
-        TFGPR1.setText(String.format("%016d", 0));
-        TFGPR2.setText(String.format("%016d", 0));
-        TFGPR3.setText(String.format("%016d", 0));
-        TFIXR0.setText(String.format("%016d", 0));
-        TFIXR1.setText(String.format("%016d", 0));
-        TFIXR2.setText(String.format("%016d", 0));
-        TFPC.setText(String.format("%012d",0));
-        TFMAR.setText(String.format("%012d",0));
-        TFMBR.setText(String.format("%016d", 0));
-        TFIR.setText(String.format("%016d", 0));
-        TFCC.setText(String.format("%04d", 0));
-        TFMFR.setText(String.format("%04d", 0));*/
-
         String filePath = INPUTFILE.getText();
         memory.loadInstructionsFromFile(filePath);
         String firstLocation = String.format("%12s", Integer.toBinaryString(memory.getFirstAddress())).replace(' ', '0');
@@ -421,29 +274,7 @@ public class MachineController extends Application {
 
     @FXML
     private void handleStepButton() {
-        // execute the instruction at PC location and increment PC
-        /*String addressBin = TFPC.getText();
-        int addressDec = Integer.parseInt(addressBin, 2);
-//        String instructionBin = memory[addressDec];
-        String instructionBin = memory.getInstruction(addressDec);
-        if(instructionBin.substring(0,6).equals("000000")){
-//            memory[addressDec]=String.format("%16s",instructionBin.substring(6)).replace(' ','0');
-            memory.setMemoryContent(addressDec, String.format("%16s", instructionBin.substring(6)).replace(' ', '0'));
-        }
-        int res = parse(instructionBin);
-        addressDec++;
-        String incrementAdd = String.format("%12s",Integer.toBinaryString(addressDec)).replace(' ','0');
-        TFPC.setText(incrementAdd);
-//        TFMBR.setText(memory[addressDec]);
-        TFMBR.setText(memory.getInstruction(addressDec));
-        TFMAR.setText(incrementAdd);
-        if(addressDec==memory.getEndAddress()){
-//            TFPC.setText(String.format("%16s",Integer.toBinaryString(firstAdd)).replace(' ','0'));
-            TFPC.setText(String.format("%16s", Integer.toBinaryString(memory.getFirstAddress())).replace(' ', '0'));
-        }
-        updateFromUI2CPU();
-        System.out.println("The Step button is pressed");*/
-        cpu.step(memory);
+        cpu.step(memory,TFCONSOLEKEYBOARD.getText());
         updateFromCPU2UI();
     }
 
@@ -453,7 +284,6 @@ public class MachineController extends Application {
         String address = TFMAR.getText();
         int decimalAdd = Integer.parseInt(address, 2);
         String memoryContent = memory.getMemoryContent(decimalAdd);
-//        String memoryContent = memory[decimalAdd];
         TFMBR.setText(memoryContent);
         updateFromUI2CPU();
         System.out.println("The Load button is pressed");
@@ -465,7 +295,6 @@ public class MachineController extends Application {
         String content = TFMBR.getText();
         String address = TFMAR.getText();
         int decimalAdd = Integer.parseInt(address, 2);
-//        memory[decimalAdd] = content;
         memory.setMemoryContent(decimalAdd, content);
         updateFromUI2CPU();
         System.out.println("The Store button is pressed");
@@ -487,7 +316,7 @@ public class MachineController extends Application {
     public void start(Stage stage) throws IOException {
         // set up the UI
         FXMLLoader fxmlLoader = new FXMLLoader(MachineController.class.getResource("machine.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 800, 600);
+        Scene scene = new Scene(fxmlLoader.load(), 900, 750);
         stage.setTitle("Machine Simulator");
         stage.setScene(scene);
         stage.show();

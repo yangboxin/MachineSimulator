@@ -137,10 +137,10 @@
             <Font name="Bell MT Bold" size="22.0" />
          </font>
       </Label>
-      <Button id="OPButtons" fx:id="LOAD_Button" layoutX="259.0" layoutY="305.0" mnemonicParsing="false" onAction="#handleLoadButton" prefHeight="42.0" prefWidth="72.0" text="LOAD" />
-      <Button id="OPButtons" fx:id="STORE_Button" layoutX="381.0" layoutY="305.0" mnemonicParsing="false" onAction="#handleStoreButton" prefHeight="42.0" prefWidth="72.0" text="STORE" />
-      <Button id="OPButtons" fx:id="LOADPLUS_Button" layoutX="259.0" layoutY="354.0" mnemonicParsing="false" onAction="#handleLoadPlusButton" prefHeight="42.0" prefWidth="82.0" text="LOAD+" />
-      <Button id="OPButtons" fx:id="STOREPLUS_Button" layoutX="381.0" layoutY="354.0" mnemonicParsing="false" onAction="#handleStorePlusButton" prefHeight="42.0" prefWidth="82.0" text="STORE+" />
+      <Button id="OPButtons" fx:id="LOAD_Button" layoutX="645.0" layoutY="288.0" mnemonicParsing="false" onAction="#handleLoadButton" prefHeight="42.0" prefWidth="72.0" text="LOAD" />
+      <Button id="OPButtons" fx:id="STORE_Button" layoutX="644.0" layoutY="342.0" mnemonicParsing="false" onAction="#handleStoreButton" prefHeight="42.0" prefWidth="72.0" text="STORE" />
+      <Button id="OPButtons" fx:id="LOADPLUS_Button" layoutX="732.0" layoutY="288.0" mnemonicParsing="false" onAction="#handleLoadPlusButton" prefHeight="42.0" prefWidth="82.0" text="LOAD+" />
+      <Button id="OPButtons" fx:id="STOREPLUS_Button" layoutX="732.0" layoutY="342.0" mnemonicParsing="false" onAction="#handleStorePlusButton" prefHeight="42.0" prefWidth="82.0" text="STORE+" />
       <TextField id="TF" fx:id="TFCC" layoutX="554.0" layoutY="252.0" prefHeight="25.0" prefWidth="72.0">
       </TextField>
       <TextField id="TF" fx:id="TFMFR" layoutX="554.0" layoutY="296.0" prefHeight="25.0" prefWidth="72.0">
@@ -172,21 +172,27 @@
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <Button id="OPButtons" fx:id="Read20numbers" layoutX="565.0" layoutY="354.0" mnemonicParsing="false" onAction="#handleread20numbers" prefHeight="42.0" prefWidth="145.0" text="Read 20 Numbers" />
-      <TextArea fx:id="TFCacheConsole" layoutX="415.0" layoutY="454.0" prefHeight="261.0" prefWidth="257.0" />
+      <Button id="OPButtons" fx:id="Read20numbers" layoutX="281.0" layoutY="329.0" mnemonicParsing="false" onAction="#handleread20numbers" prefHeight="42.0" prefWidth="145.0" text="Read 20 Numbers" />
+      <TextField fx:id="TFCacheConsole" layoutX="415.0" layoutY="454.0" prefHeight="261.0" prefWidth="257.0" />
       <Label layoutX="412.0" layoutY="433.0" prefHeight="19.0" prefWidth="165.0" text="CACHE CONSOLE">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <Label layoutX="19.0" layoutY="338.0" prefHeight="19.0" prefWidth="165.0" text="CONSOLE KEYBOARD">
+      <Label layoutX="117.0" layoutY="398.0" prefHeight="19.0" prefWidth="165.0" text="CONSOLE KEYBOARD">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <TextField id="TF" fx:id="INPUTFILE" layoutX="23.0" layoutY="363.0" prefHeight="25.0" prefWidth="228.0" />
-      <Button id="OPButtons" fx:id="COMPARE" layoutX="585.0" layoutY="400.0" mnemonicParsing="false" onAction="#handlecompare" prefHeight="42.0" prefWidth="95.0" text="COMPARE" />
-      <Label layoutX="482.0" layoutY="361.0" prefHeight="19.0" prefWidth="82.0" text="PROGRAM 1">
+      <TextField id="TF" fx:id="TFCONSOLEKEYBOARD" layoutX="267.0" layoutY="395.0" prefHeight="25.0" prefWidth="228.0" />
+      <Button id="OPButtons" fx:id="COMPARE" layoutX="447.0" layoutY="330.0" mnemonicParsing="false" onAction="#handlecompare" prefHeight="42.0" prefWidth="95.0" text="COMPARE" />
+      <Label layoutX="158.0" layoutY="341.0" prefHeight="19.0" prefWidth="82.0" text="PROGRAM 1">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
+      </Label>
+      <TextField id="TF" fx:id="INPUTFILE" layoutX="645.0" layoutY="252.0" prefHeight="25.0" prefWidth="228.0" promptText="ENTER THE FILEPATH" />
+      <Label layoutX="716.0" layoutY="233.0" text="FILEPATH">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
