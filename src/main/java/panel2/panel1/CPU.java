@@ -258,23 +258,38 @@ public class CPU {
                 fromMem=(String.format("%16s", fromMem).replace(' ', '0'));
                 index=Integer.parseInt(generalRegisters,2);
                 GPR[index]=fromMem;
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 return 0;
             case "000010"://STR r,x,address,[i]
                 index=Integer.parseInt(generalRegisters,2);
                 memory.setMemoryContent(EA, String.format("%16s", GPR[index]).replace(' ', '0'));
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 return 0;
             case "000011"://LDA r,x,address,[i]
                 index=Integer.parseInt(generalRegisters,2);
                 GPR[index]=(String.format("%16s", address).replace(' ', '0'));
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 return 0;
             case "000100"://LDX x,address,[i]
                 fromMem = memory.getMemoryContent(EA);
                 index=Integer.parseInt(indexRegisters,2);
                 IXR[index]=(String.format("%16s", fromMem).replace(' ', '0'));
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 return 0;
             case "000101"://STX x,address,[i]
                 index=Integer.parseInt(indexRegisters,2);
                 memory.setMemoryContent(EA, String.format("%16s", IXR[index]).replace(' ', '0'));
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 return 0;
             default:
                 return 1;
@@ -305,6 +320,9 @@ public class CPU {
                 } else {
                     CC = CC.substring(0, 3) + "0"; // Set the E bit of the condition code to 0
                 }
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 break;
             case "000110": // JZ x, address[,I]
                 if (CC.charAt(3) == '1') { // E bit of Condition Code is 1
@@ -313,6 +331,9 @@ public class CPU {
                     int currPCValue = Integer.parseInt(PC, 2);
                     PC = String.format("%12s", Integer.toBinaryString(currPCValue + 1)).replace(' ', '0');
                 }
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 break;
             case "000111": // JNE x, address[,I]
                 if (CC.charAt(3) == '0') { // E bit of Condition Code is 0
@@ -320,6 +341,9 @@ public class CPU {
                 } else {
                     int currPCValue = Integer.parseInt(PC, 2);
                     PC = String.format("%12s", Integer.toBinaryString(currPCValue + 1)).replace(' ', '0');
+                }
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
                 }
                 break;
             case "001000": // JCC cc, x, address[,I]
@@ -330,20 +354,32 @@ public class CPU {
                     int currPCValue = Integer.parseInt(PC, 2);
                     PC = String.format("%12s", Integer.toBinaryString(currPCValue + 1)).replace(' ', '0');
                 }
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 break;
             case "001001": // JMA x, address[,I]
                 PC = String.format("%12s", Integer.toBinaryString(EA)).replace(' ', '0');
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 break;
             case "001010": // JSR x, address[,I]
                 int currPCValue = Integer.parseInt(PC, 2);
                 GPR[3] = String.format("%16s", Integer.toBinaryString(currPCValue + 1)).replace(' ', '0');
                 PC = String.format("%12s", Integer.toBinaryString(EA)).replace(' ', '0');
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 break;
             case "001011": // RFS Immed
                 int immed = Integer.parseInt(address, 2);
                 GPR[0] = String.format("%16s", Integer.toBinaryString(immed)).replace(' ', '0');
                 int returnAddr = Integer.parseInt(GPR[3], 2);
                 PC = String.format("%12s", Integer.toBinaryString(returnAddr)).replace(' ', '0');
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 break;
             case "001100": // SOB r, x, address[,I]
                 int regValSOB = Integer.parseInt(GPR[registerIndex], 2);
@@ -355,6 +391,9 @@ public class CPU {
                     int currPCValueSOB = Integer.parseInt(PC, 2);
                     PC = String.format("%12s", Integer.toBinaryString(currPCValueSOB + 1)).replace(' ', '0');
                 }
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 break;
             case "001101": // JGE r, x, address[,I]
                 int regValJGE = Integer.parseInt(GPR[registerIndex], 2);
@@ -363,6 +402,9 @@ public class CPU {
                 } else {
                     int currPCValueJGE = Integer.parseInt(PC, 2);
                     PC = String.format("%12s", Integer.toBinaryString(currPCValueJGE + 1)).replace(' ', '0');
+                }
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
                 }
                 break;
             default:
@@ -401,6 +443,9 @@ public class CPU {
                 cr=Integer.parseInt(GPR[index],2);
                 cea=Integer.parseInt(fromMem,2);
                 GPR[index]=String.format("%16s",Integer.toBinaryString(cr+cea)).replace(' ','0');
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 return 0;
             case "001111":
                 //SMR r,x,address,[i]
@@ -409,6 +454,9 @@ public class CPU {
                 cr=Integer.parseInt(GPR[index],2);
                 cea=Integer.parseInt(fromMem,2);
                 GPR[index]=String.format("%16s",Integer.toBinaryString(cr-cea)).replace(' ','0');
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 return 0;
             case "010000":
                 //AIR r,immed
@@ -419,6 +467,9 @@ public class CPU {
                     immed=-immed;
                 }
                 GPR[index]=String.format("%16s",Integer.toBinaryString(cr+immed)).replace(' ','0');
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 return 0;
             case "010001":
                 //SIR r,immed
@@ -429,6 +480,9 @@ public class CPU {
                     immed=-immed;
                 }
                 GPR[index]=String.format("%16s",Integer.toBinaryString(cr-immed)).replace(' ','0');
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 return 0;
             case "010010":
                 //MLT rx,ry
@@ -450,6 +504,9 @@ public class CPU {
                 }
                 else{
                     return 2;//wrong register for multiply
+                }
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
                 }
                 return 0;
             case "010011":
@@ -477,6 +534,9 @@ public class CPU {
                 else{
                     return 2;//wrong register for multiply
                 }
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 return 0;
             case "010100":
                 //TRR rx,ry
@@ -490,6 +550,9 @@ public class CPU {
                 else{
                     CC=CC.substring(0,3)+"0";
                 }
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 return 0;
             case "010101":
                 //AND rx,ry
@@ -499,6 +562,9 @@ public class CPU {
                 int ry3=Integer.parseInt(GPR[index1],2);
                 rx3=rx3&ry3;
                 GPR[index]=String.format("%16s",Integer.toBinaryString(rx3)).replace(' ','0');
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 return 0;
             case "010110":
                 //ORR rx,ry
@@ -508,6 +574,9 @@ public class CPU {
                 int ry4=Integer.parseInt(GPR[index2],2);
                 rx4=rx4|ry4;
                 GPR[index]=String.format("%16s",Integer.toBinaryString(rx4)).replace(' ','0');
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 return 0;
             case "010111":
                 //NOT rx
@@ -515,6 +584,9 @@ public class CPU {
                 int rx5=Integer.parseInt(GPR[index],2);
                 int nrx=~rx5;
                 GPR[index]=String.format("%16s",Integer.toBinaryString(nrx)).replace(' ','0');
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 return 0;
             default:
                 return 1;
@@ -568,6 +640,9 @@ public class CPU {
                     }
                     GPR[index]=String.format("%16s",result.toString()).replace(' ','0');
                 }
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
+                }
                 return 0;
             case "011001":
                 //RRC r,count,L/R,A/L
@@ -585,6 +660,9 @@ public class CPU {
                         // Move the last character to the beginning
                         content1 = content1.charAt(content1.length() - 1) + content1.substring(0, content1.length() - 1);
                     }
+                }
+                if (stateUpdateCallback != null) {
+                    stateUpdateCallback.onStateUpdated();
                 }
                 return 0;
             default:
