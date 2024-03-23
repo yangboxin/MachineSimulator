@@ -22,6 +22,7 @@ public class CPU {
     public int OVERFLOW=0;
     public int DIVZERO=0;
     private HashSet<String> LoadStore;
+    private HashSet<String> Transfer;
     private HashSet<String> ArithmeticLogic;
     private HashSet<String> ShiftRotate;
     private HashSet<String> IO;
@@ -45,6 +46,16 @@ public class CPU {
         LoadStore.add("000011");
         LoadStore.add("000100");
         LoadStore.add("000101");
+        Transfer = new HashSet<>();
+        Transfer.add("100100"); // SETCCE
+        Transfer.add("000110"); // JZ
+        Transfer.add("000111"); // JNE
+        Transfer.add("001000"); // JCC
+        Transfer.add("001001"); // JMA
+        Transfer.add("001010"); // JSR
+        Transfer.add("001011"); // RFS
+        Transfer.add("001100"); // SOB
+        Transfer.add("001101"); // JGE
         ArithmeticLogic = new HashSet<>();
         ArithmeticLogic.add("001110");
         ArithmeticLogic.add("001111");
@@ -185,6 +196,9 @@ public class CPU {
         if(LoadStore.contains(opcode)){
             return handleLoadStore(instruction, memory);
         }
+        else if(Transfer.contains(opcode)){
+            return handleTransfer(instruction, memory);
+        }
         else if(ArithmeticLogic.contains(opcode)){
             return handleArithmetiLogic(instruction, memory);
         }
@@ -247,6 +261,97 @@ public class CPU {
             default:
                 return 1;
         }
+    }
+    private int handleTransfer(String instruction, Memory memory) {
+        String opcode = instruction.substring(0, 6);
+        String generalRegisters = instruction.substring(6, 8);
+        String indexRegisters = instruction.substring(8, 10);
+        String addressingMode = instruction.substring(10, 11);
+        String address = instruction.substring(11);
+
+        int EA = calculateEA(indexRegisters, addressingMode, address, memory);
+        if (EA < 0) {
+            // Handle unreachable effective address
+            System.out.println("Unreachable effective address detected.");
+            return -1;
+        }
+
+        int registerIndex = Integer.parseInt(generalRegisters, 2);
+
+        switch (opcode) {
+            case "100100": // SETCCE r
+                String regValue = GPR[registerIndex];
+                int value = Integer.parseInt(regValue, 2);
+                if (value == 0) {
+                    CC = CC.substring(0, 3) + "1"; // Set the E bit of the condition code to 1
+                } else {
+                    CC = CC.substring(0, 3) + "0"; // Set the E bit of the condition code to 0
+                }
+                break;
+            case "000110": // JZ x, address[,I]
+                if (CC.charAt(3) == '1') { // E bit of Condition Code is 1
+                    PC = String.format("%12s", Integer.toBinaryString(EA)).replace(' ', '0');
+                } else {
+                    int currPCValue = Integer.parseInt(PC, 2);
+                    PC = String.format("%12s", Integer.toBinaryString(currPCValue + 1)).replace(' ', '0');
+                }
+                break;
+            case "000111": // JNE x, address[,I]
+                if (CC.charAt(3) == '0') { // E bit of Condition Code is 0
+                    PC = String.format("%12s", Integer.toBinaryString(EA)).replace(' ', '0');
+                } else {
+                    int currPCValue = Integer.parseInt(PC, 2);
+                    PC = String.format("%12s", Integer.toBinaryString(currPCValue + 1)).replace(' ', '0');
+                }
+                break;
+            case "001000": // JCC cc, x, address[,I]
+                int ccIndex = Integer.parseInt(generalRegisters, 2);
+                if (CC.charAt(ccIndex) == '1') {
+                    PC = String.format("%12s", Integer.toBinaryString(EA)).replace(' ', '0');
+                } else {
+                    int currPCValue = Integer.parseInt(PC, 2);
+                    PC = String.format("%12s", Integer.toBinaryString(currPCValue + 1)).replace(' ', '0');
+                }
+                break;
+            case "001001": // JMA x, address[,I]
+                PC = String.format("%12s", Integer.toBinaryString(EA)).replace(' ', '0');
+                break;
+            case "001010": // JSR x, address[,I]
+                int currPCValue = Integer.parseInt(PC, 2);
+                GPR[3] = String.format("%16s", Integer.toBinaryString(currPCValue + 1)).replace(' ', '0');
+                PC = String.format("%12s", Integer.toBinaryString(EA)).replace(' ', '0');
+                break;
+            case "001011": // RFS Immed
+                int immed = Integer.parseInt(address, 2);
+                GPR[0] = String.format("%16s", Integer.toBinaryString(immed)).replace(' ', '0');
+                int returnAddr = Integer.parseInt(GPR[3], 2);
+                PC = String.format("%12s", Integer.toBinaryString(returnAddr)).replace(' ', '0');
+                break;
+            case "001100": // SOB r, x, address[,I]
+                int regValSOB = Integer.parseInt(GPR[registerIndex], 2);
+                int regValSOB1 = regValSOB - 1;
+                GPR[registerIndex] = String.format("%16s", Integer.toBinaryString(regValSOB1)).replace(' ', '0');
+                if (regValSOB > 0) {
+                    PC = String.format("%12s", Integer.toBinaryString(EA)).replace(' ', '0');
+                } else {
+                    int currPCValueSOB = Integer.parseInt(PC, 2);
+                    PC = String.format("%12s", Integer.toBinaryString(currPCValueSOB + 1)).replace(' ', '0');
+                }
+                break;
+            case "001101": // JGE r, x, address[,I]
+                int regValJGE = Integer.parseInt(GPR[registerIndex], 2);
+                if (regValJGE >= 0) {
+                    PC = String.format("%12s", Integer.toBinaryString(EA)).replace(' ', '0');
+                } else {
+                    int currPCValueJGE = Integer.parseInt(PC, 2);
+                    PC = String.format("%12s", Integer.toBinaryString(currPCValueJGE + 1)).replace(' ', '0');
+                }
+                break;
+            default:
+                return 1; // error
+        }
+
+        return 0;
     }
     private int handleArithmetiLogic(String instruction, Memory memory){
         // Extracting opcode
