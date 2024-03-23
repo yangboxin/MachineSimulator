@@ -1,13 +1,19 @@
 package panel2.panel1;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 
-import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.HashSet;
 
 public class CPU {
+    private IOCallback ioCallback;
+    public interface StateUpdateCallback {
+        void onStateUpdated();
+    }
+
+    private String keyboardInput;
+    private final Object lock = new Object();
     public String[] GPR = new String[4];
     public String[] IXR = new String[3];
     public String PC = "000000000000";
@@ -29,6 +35,12 @@ public class CPU {
     public CPU() {
 
     }
+    private StateUpdateCallback stateUpdateCallback;
+
+    public void setStateUpdateCallback(StateUpdateCallback callback) {
+        this.stateUpdateCallback = callback;
+    }
+
 
     public void init(){
         Arrays.fill(GPR, "0000000000000000");
@@ -97,6 +109,12 @@ public class CPU {
     public void setMFR(String content) {
         MFR=content;
     }
+    public void setIoCallback(IOCallback callback){
+        this.ioCallback=callback;
+    }
+    public IOCallback getIoCallback(){
+        return this.ioCallback;
+    }
     public void setConsolePrinter(String content){Printer=content;};
     public void setConsoleKeyboard(String content){Keyboard=content;};
     public String getGPR(int index){
@@ -125,18 +143,18 @@ public class CPU {
     }
     public String getConsolePrinter(){return Printer;};
     public String getConsoleKeyboard(){return Keyboard;};
-    public int step(Memory memory,String input){
+    public int step(Memory memory){
         String addressBin = PC;
         int addressDec = Integer.parseInt(addressBin, 2);
-        String instructionBin = memory.getInstruction(addressDec);
+        String instructionBin = memory.getMemoryContent(addressDec);
         if(instructionBin.substring(0,6).equals("000000")){
             memory.setMemoryContent(addressDec, String.format("%16s", instructionBin.substring(6)).replace(' ', '0'));
         }
-        int res = parse(instructionBin, memory, input);
+        int res = parse(instructionBin, memory);
         addressDec++;
         String incrementAdd = String.format("%12s",Integer.toBinaryString(addressDec)).replace(' ','0');
         PC=incrementAdd;
-        MBR=memory.getInstruction(addressDec);
+        MBR=memory.getMemoryContent(addressDec);
         MAR=incrementAdd;
         if(addressDec==memory.getEndAddress()){
             PC=(String.format("%16s", Integer.toBinaryString(memory.getFirstAddress())).replace(' ', '0'));
@@ -188,7 +206,7 @@ public class CPU {
         }
         return effectiveAddress;
     }
-    private int parse(String instruction, Memory memory, String input){
+    private int parse(String instruction, Memory memory){
         // input is instruction's binary form
         if(instruction.length()!=16)
             return 10; // wrong format; reserved for debug
@@ -206,7 +224,7 @@ public class CPU {
             return handleShiftRotate(instruction,memory);
         }
         else if(IO.contains(opcode)){
-            return handleIO(instruction,memory,input);
+            return handleIOAsync(instruction,memory);
         }
         // easy to develop other instructions under this structure
         return 1;// error;
@@ -573,7 +591,7 @@ public class CPU {
                 return 1;
         }
     }
-    private int handleIO(String instruction, Memory memory, String input){
+    private int handleIO(String instruction, Memory memory){
         // Extracting opcode
         String opcode = instruction.substring(0, 6);
 
@@ -584,24 +602,46 @@ public class CPU {
         String devID = instruction.substring(11);
         int index=0;
         int devid=Integer.parseInt(devID,2);
+        String input="";
         switch (opcode){
             case "011010":
                 //IN r,devid
                 index=Integer.parseInt(generalRegisters,2);
                 if(devid==0 || devid==1 || devid==2){
-                    switch (devid){
-                        case 0:
-                            //Keyboard
-                            GPR[index]=String.format("%16s",input).replace(' ','0');
-                            return 0;
-                        case 2:
-                            //card reader
+                    switch (devid) {
+                        case 0: // Keyboard
+                            synchronized (lock) {
+                                keyboardInput = null;
+                                if (ioCallback != null) {
+                                    ioCallback.onInputreceived(null);
+                                }
+                                while (keyboardInput == null) {
+                                    try {
+                                        lock.wait();
+                                        System.out.println("unlocked");
+                                    } catch (InterruptedException e) {
+                                        Thread.currentThread().interrupt();
+                                        return 1;
+                                    }
+                                }
+                                GPR[index] = String.format("%16s", Integer.toBinaryString(Integer.parseInt(keyboardInput))).replace(' ', '0');
+                                if (stateUpdateCallback != null) {
+                                    stateUpdateCallback.onStateUpdated();
+                                }
+                                return 0;
+                            }
+                        case 2: // Card reader
+                            break;
                         default:
-                            return 1;//wrong dev
+                            // wrong devid
+                            break;
                     }
                 }
                 else{
                    GPR[index]=IOregisters[devid];
+                    if (stateUpdateCallback != null) {
+                        stateUpdateCallback.onStateUpdated();
+                    }
                 }
             case "011011":
                 //OUT r,devid
@@ -610,16 +650,48 @@ public class CPU {
                     if(devid==1){
                         //printer
                         StringBuilder sb=new StringBuilder(Printer);
+                        sb.append("\n");
                         sb.append(GPR[index]);
                         Printer=sb.toString();
+                        if (stateUpdateCallback != null) {
+                            stateUpdateCallback.onStateUpdated();
+                        }
+                        System.out.println("inside OUT");
                         return 0;
                     }
                 }
                 else{
-                    IOregisters[devid]=String.format("%16s",input).replace(' ','0');
+                    IOregisters[devid]=String.format("%16s",GPR[index]).replace(' ','0');
                 }
             default:
                 return 1;
+
+        }
+
+    }
+    public int handleIOAsync(String instruction, Memory memory) {
+        Task<Void> ioTask = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                System.out.println("running on new thread");
+                handleIO(instruction, memory);
+                return null;
+            }
+        };
+        ioTask.setOnFailed(event -> {
+            Throwable e = ioTask.getException();
+            e.printStackTrace();
+        });
+
+        new Thread(ioTask).start();
+        return 0;
+    }
+
+    public void setKeyboardInput(String input) {
+        synchronized (lock) {
+            this.keyboardInput = input;
+            System.out.println("this is the keyboard input"+input);
+            lock.notifyAll();
         }
     }
 }

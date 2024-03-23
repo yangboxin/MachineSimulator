@@ -1,11 +1,18 @@
 package panel2.panel1;
 
+
+import javafx.animation.Timeline;
 import javafx.application.Application;
+
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
@@ -22,6 +29,7 @@ public class MachineController extends Application {
     private HashMap<String, TextField> regMap;
     private HashMap<String, TextField> ixrMap;
     private Memory memory;
+    private Timeline poller;
     private CPU cpu;
 
     // Add other FXML elements as needed
@@ -58,11 +66,15 @@ public class MachineController extends Application {
     @FXML
     private TextField INPUTFILE;
     @FXML
-    private TextField TFCONSOLEPRINTER;
-    @FXML
-    private TextField TFCacheConsole;
+    private TextArea TFCONSOLEPRINTER;
     @FXML
     private TextField TFCONSOLEKEYBOARD;
+    @FXML
+    private TableView<CacheEntry> cacheTable;
+    @FXML
+    private TableColumn<CacheEntry, String> tagColumn;
+    @FXML
+    private TableColumn<CacheEntry, String> valueColumn;
     @FXML
     private Button GPR0;
     @FXML
@@ -103,7 +115,6 @@ public class MachineController extends Application {
 
 
     public void init(){
-        // initialization for memory-related
         regMap = new HashMap<>();
         regMap.put("00", TFGPR0);
         regMap.put("01", TFGPR1);
@@ -113,12 +124,8 @@ public class MachineController extends Application {
         ixrMap.put("00", TFIXR0);
         ixrMap.put("01", TFIXR1);
         ixrMap.put("10", TFIXR2);
-
-        memory = new Memory();
-        cpu = new CPU();
-        cpu.init();
-
     }
+
     @FXML
     private void initialize() {
         //initialization for FXML-related
@@ -186,8 +193,44 @@ public class MachineController extends Application {
             TFIR.setText(TFBINARY.getText());
             updateFromUI2CPU();
         });
+        memory=new Memory();
+        cacheTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tagColumn.setCellValueFactory(cellData -> cellData.getValue().tagProperty());
+        valueColumn.setCellValueFactory(cellData -> cellData.getValue().valueProperty());
+        cacheTable.setItems(memory.getCache());
+        memory.getCache().addListener(new ListChangeListener<CacheEntry>() {
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends CacheEntry> change) {
+                while (change.next()) {
+                    if (change.wasAdded() || change.wasRemoved() || change.wasUpdated()) {
+                        // update if any change in cache
+                        cacheTable.refresh();
+                    }
+                }
+            }
+        });
+        cpu = new CPU();
+        cpu.init();
+        cpu.setIoCallback(new IOCallback() {
+            @Override
+            public void onInputreceived(String input) {
+                cpu.setKeyboardInput(input);
+            }
+        });
+        cpu.setStateUpdateCallback(() -> {
+            Platform.runLater(this::updateFromCPU2UI);
+        });
+        TFCONSOLEKEYBOARD.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                String input = TFCONSOLEKEYBOARD.getText();
+                TFCONSOLEKEYBOARD.clear();
+                IOCallback callback=cpu.getIoCallback();
+                if(callback!=null) {
+                    callback.onInputreceived(input);
+                }
+            }
+        });
     }
-
     private int updateFromUI2CPU(){
         cpu.setGPR(0,TFGPR0.getText());
         cpu.setGPR(1,TFGPR1.getText());
@@ -202,8 +245,9 @@ public class MachineController extends Application {
         cpu.setIR(TFIR.getText());
         cpu.setCC(TFCC.getText());
         cpu.setMFR(TFMFR.getText());
+
         //cpu.setConsolePrinter(TFCONSOLEPRINTER.getText());
-        cpu.setConsoleKeyboard(TFCONSOLEKEYBOARD.getText());
+        //cpu.setConsoleKeyboard(TFCONSOLEKEYBOARD.getText());
         return 0;
     }
     private int updateFromCPU2UI(){
@@ -234,8 +278,7 @@ public class MachineController extends Application {
             protected Void call() throws Exception {
                 while(!isCancelled()){
                     // HALT controls isCancelled()
-                    cpu.step(memory, TFCONSOLEKEYBOARD.getText());
-                    updateFromCPU2UI();
+                    cpu.step(memory);
                     Thread.sleep(1000);// sleep 1s each cycle for a clear display in panel
                 }
                 return null;
@@ -274,8 +317,7 @@ public class MachineController extends Application {
 
     @FXML
     private void handleStepButton() {
-        cpu.step(memory,TFCONSOLEKEYBOARD.getText());
-        updateFromCPU2UI();
+        cpu.step(memory);
     }
 
     @FXML

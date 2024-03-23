@@ -9,6 +9,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.ScrollPane?>
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="814.0" prefWidth="1467.0" style="-fx-background-color: #7FFFD4;" stylesheets="@Styles.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="panel2.panel1.MachineController">
    <children>
       <ImageView fx:id="imageView" fitHeight="814.0" fitWidth="1467.0">
@@ -166,14 +169,23 @@
          </font>
       </Label>
       <Button id="RegButtons" fx:id="PC_Button" layoutX="660.0" layoutY="91.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="21.0" />
-      <TextField id="TF" fx:id="TFCONSOLEPRINTER" layoutX="14.0" layoutY="451.0" prefHeight="261.0" prefWidth="385.0" />
+      <TextArea id="TF" fx:id="TFCONSOLEPRINTER" layoutX="14.0" layoutY="451.0" prefHeight="261.0" prefWidth="385.0" />
       <Label layoutX="19.0" layoutY="430.0" prefHeight="19.0" prefWidth="165.0" text="CONSOLE PRINTER">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
       <Button id="OPButtons" fx:id="Read20numbers" layoutX="281.0" layoutY="329.0" mnemonicParsing="false" onAction="#handleread20numbers" prefHeight="42.0" prefWidth="145.0" text="Read 20 Numbers" />
-      <TextField fx:id="TFCacheConsole" layoutX="415.0" layoutY="454.0" prefHeight="261.0" prefWidth="257.0" />
+      <ScrollPane fitToHeight="true" fitToWidth="true" layoutY="454" layoutX="415" prefWidth="300" prefHeight="300">
+         <TableView fx:id="cacheTable" layoutX="415" layoutY="454" prefWidth="300" prefHeight="400">
+            <columns>
+               <TableColumn fx:id="tagColumn" text="Tag"/>
+               <TableColumn fx:id="valueColumn" text="Value"/>
+            </columns>
+         </TableView>
+      </ScrollPane>
+
+
       <Label layoutX="412.0" layoutY="433.0" prefHeight="19.0" prefWidth="165.0" text="CACHE CONSOLE">
          <font>
             <Font name="System Bold" size="13.0" />
