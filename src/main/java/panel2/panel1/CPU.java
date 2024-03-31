@@ -623,12 +623,19 @@ public class CPU {
                 int ry2=Integer.parseInt(GPR[indexy],2);
                 if(rx2==ry2){
                     CC=CC.substring(0,3)+"1";
+                    CC=CC.substring(0,2)+"0"+CC.substring(3);
+                    CC=CC.substring(0,1)+"0"+CC.substring(2);
+
                 }
                 else if(rx2<ry2){
                     CC=CC.substring(0,2)+"1"+CC.substring(3);
+                    CC=CC.substring(0,3)+"0";
+                    CC=CC.substring(0,1)+"0"+CC.substring(2);
                 }
                 else{
                     CC=CC.substring(0,1)+"1"+CC.substring(2);
+                    CC=CC.substring(0,2)+"0"+CC.substring(3);
+                    CC=CC.substring(0,3)+"0";
                 }
                 if (stateUpdateCallback != null) {
                     stateUpdateCallback.onStateUpdated();
@@ -823,7 +830,7 @@ public class CPU {
                 else{
                     IOregisters[devid]=String.format("%16s",GPR[index]).replace(' ','0');
                 }
-                ioExecutor.shutdown();
+                //ioExecutor.shutdown();
             default:
                 return 1;
 
@@ -831,7 +838,7 @@ public class CPU {
 
     }
     public int handleIOAsync(String instruction, Memory memory) {
-        /*Task<Void> ioTask = new Task<Void>() {
+        Task<Void> ioTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 System.out.println("running on new thread");
@@ -845,11 +852,11 @@ public class CPU {
         });
 
         new Thread(ioTask).start();
-        return 0;*/
-        addIOTask(() -> {
+        return 0;
+        /*addIOTask(() -> {
             handleIO(instruction, memory);
         });
-        return 0;
+        return 0;*/
     }
     public void setKeyboardInput(String input) {
         synchronized (lock) {
